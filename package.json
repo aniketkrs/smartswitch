@@ -1,0 +1,88 @@
+{
+  "name": "smartswitch",
+  "displayName": "SmartSwitch AI Router",
+  "description": "Universal AI Model Router for VS Code and Google Antigravity",
+  "version": "1.0.0",
+  "publisher": "aniket",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "smartswitch.openSettings",
+        "title": "SmartSwitch: Configure Models and Rules"
+      },
+      {
+        "command": "smartswitch.setApiKey",
+        "title": "SmartSwitch: Set API Key"
+      }
+    ],
+    "configuration": {
+      "title": "SmartSwitch AI Router",
+      "properties": {
+        "smartswitch.proxyPort": {
+          "type": "number",
+          "default": 11434,
+          "description": "Port for the local LLM routing proxy."
+        },
+        "smartswitch.routingRules": {
+          "type": "array",
+          "description": "Custom model routing rules.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ruleName": { "type": "string" },
+              "priority": { "type": "number" },
+              "conditions": {
+                "type": "object",
+                "properties": {
+                  "minTokens": { "type": "number" },
+                  "taskType": { "type": "string" },
+                  "language": { "type": "string" }
+                }
+              },
+              "targetModel": { "type": "string" },
+              "fallbackChain": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "default": [
+            {
+              "ruleName": "Tier 1: Fast Action",
+              "priority": 10,
+              "conditions": { "minTokens": 0 },
+              "targetModel": "gemini-3-flash",
+              "fallbackChain": ["claude-4-haiku"]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@types/express": "^4.17.21",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.0"
+  }
+}
